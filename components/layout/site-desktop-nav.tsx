@@ -9,15 +9,14 @@ import NavDropdown from '../nav-dropdown'
 
 const SiteDesktopNav = () => {
 	return (
-		<nav className="hidden lg:grid grid-cols-3 ">
-			<div className="bg-blue-500  text-white rounded-full h-10 w-10 flex items-center justify-center">
-				<Link
-					href="/"
-					aria-label={siteConfig.title}
-				>
-					<Icons.logo className="h-5 w-5" />
-				</Link>
-			</div>
+		<nav className="hidden lg:grid grid-cols-3 items-center">
+			<Link
+				href="/"
+				aria-label={siteConfig.title}
+				className="mr-auto"
+			>
+				<Icons.logo className="h-6 w-6 text-blue-500 fill-blue-500" />
+			</Link>
 			<div className="relative">
 				<Input
 					type="text"
