@@ -9,7 +9,9 @@ export default function Home() {
 			<Container>
 				<div className="grid grid-cols-7 gap-6">
 					<FriendsShowcase />
-					<PostShowcase />
+					<div className="col-span-3">
+						<PostShowcase />
+					</div>
 					<div className="col-span-2 ">Right</div>
 				</div>
 			</Container>
