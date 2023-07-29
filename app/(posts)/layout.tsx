@@ -2,6 +2,7 @@ import SiteFooter from '@/components/layout/site-footer'
 import SiteHeader from '@/components/layout/site-header'
 import Container from '@/components/ui/container'
 import FriendsShowcase from './components/FriendsShowcase'
+import SiteMobileLowerNav from '@/components/layout/site-mobile-lower-nav'
 
 export default function RootLayout({
 	children,
@@ -11,6 +12,7 @@ export default function RootLayout({
 	return (
 		<div className="flex flex-col min-h-screen">
 			<SiteHeader />
+			<SiteMobileLowerNav />
 			<main className="flex-1 ">
 				<div className="py-6">
 					<Container>

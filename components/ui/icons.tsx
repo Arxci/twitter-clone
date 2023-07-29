@@ -5,6 +5,7 @@ import {
 	ArrowDown,
 	Heart,
 	ArrowUpDown,
+	Group,
 	ArrowUp,
 	BarChart3,
 	CalendarDays,
@@ -60,6 +61,7 @@ import {
 	Twitter,
 	UploadCloud,
 	User,
+	Users,
 	Volume2,
 	VolumeX,
 	Wallet,
@@ -74,6 +76,7 @@ export type Icon = LucideIcon
 export const Icons = {
 	sun: SunMedium,
 	moon: Moon,
+	group: Users,
 	star: Star,
 	heart: Heart,
 	twitter: Twitter,
