@@ -14,6 +14,7 @@ import { Icons } from './ui/icons'
 import { Button } from './ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
 import { Badge } from './ui/badge'
+import Link from 'next/link'
 
 const Post = () => {
 	const [mounted, setMounted] = useState(false)
@@ -30,7 +31,7 @@ const Post = () => {
 		<Card>
 			<CardHeader>
 				<CardTitle>Post Title</CardTitle>
-				<CardDescription>
+				<CardDescription className="flex flex-col gap-2">
 					<div className="flex items-center">
 						<Avatar className="mr-2 h-6 w-6">
 							<AvatarImage src="https://github.com/shadcn.png" />
@@ -39,8 +40,8 @@ const Post = () => {
 						<span>Author</span>
 						<Icons.dot className="h-4 w-4" />
 						<span>JUL 29</span>
-						<Icons.dot className="h-4 w-4" />
-						<Button className="text-blue-500 p-0 bg-transparent hover:bg-transparent">
+						<Icons.dot className="h-4 w-4 hidden md:block" />
+						<Button className="text-blue-500 hidden md:block p-0 bg-transparent hover:bg-transparent">
 							Follow
 						</Button>
 					</div>
@@ -54,14 +55,19 @@ const Post = () => {
 					</div>
 				</CardDescription>
 			</CardHeader>
-			<CardContent>
-				Lorem ipsum dolor sit amet consectetur adipisicing elit. Incidunt
-				distinctio quibusdam deserunt, pariatur at dolorem. Officiis nobis modi
-				cumque impedit sed architecto repudiandae possimus minus sint laboriosam
-				numquam, earum veritatis quae molestias quibusdam sapiente illum. Neque
-				libero eum omnis necessitatibus magnam laboriosam ipsum iusto nisi
-				dignissimos tempore, quos, alias vero.
-			</CardContent>
+			<Link href="/">
+				<CardContent>
+					<p className="line-clamp-4">
+						Lorem ipsum dolor sit amet consectetur adipisicing elit. Incidunt
+						distinctio quibusdam deserunt, pariatur at dolorem. Officiis nobis
+						modi cumque impedit sed architecto repudiandae possimus minus sint
+						laboriosam numquam, earum veritatis quae molestias quibusdam
+						sapiente illum. Neque libero eum omnis necessitatibus magnam
+						laboriosam ipsum iusto nisi dignissimos tempore, quos, alias vero.
+					</p>
+				</CardContent>
+			</Link>
+
 			<CardFooter>
 				<ul className="grid grid-cols-3 gap-4 w-full ">
 					<li className="flex justify-center text-muted-foreground">

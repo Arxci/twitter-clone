@@ -12,30 +12,28 @@ import Link from 'next/link'
 
 const FriendsShowcase = () => {
 	return (
-		<div className="col-span-2 ">
-			<Card>
-				<CardHeader>
-					<CardTitle>Friends</CardTitle>
-					<CardDescription>View your most recent friends</CardDescription>
-				</CardHeader>
-				<CardContent>
-					<ul className="flex flex-col gap-2">
-						<ShowcaseItem />
-						<ShowcaseItem />
-						<ShowcaseItem />
-						<ShowcaseItem />
-					</ul>
-				</CardContent>
-				<CardFooter className="text-xs text-muted-foreground">
-					<Link
-						href="/"
-						className="text-blue-500"
-					>
-						View More
-					</Link>
-				</CardFooter>
-			</Card>
-		</div>
+		<Card>
+			<CardHeader>
+				<CardTitle>Friends</CardTitle>
+				<CardDescription>View your most recent friends</CardDescription>
+			</CardHeader>
+			<CardContent>
+				<ul className="flex flex-col gap-2">
+					<ShowcaseItem />
+					<ShowcaseItem />
+					<ShowcaseItem />
+					<ShowcaseItem />
+				</ul>
+			</CardContent>
+			<CardFooter className="text-xs text-muted-foreground">
+				<Link
+					href="/"
+					className="text-blue-500"
+				>
+					View More
+				</Link>
+			</CardFooter>
+		</Card>
 	)
 }
 
