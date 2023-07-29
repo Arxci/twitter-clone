@@ -1,3 +1,7 @@
+'use client'
+
+import { useState, useEffect } from 'react'
+
 import {
 	Card,
 	CardContent,
@@ -6,14 +10,22 @@ import {
 	CardHeader,
 	CardTitle,
 } from '@/components/ui/card'
-import Link from 'next/link'
 import { Icons } from './ui/icons'
-import { Separator } from './ui/separator'
 import { Button } from './ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
 import { Badge } from './ui/badge'
 
 const Post = () => {
+	const [mounted, setMounted] = useState(false)
+
+	useEffect(() => {
+		setMounted(true)
+	}, [])
+
+	if (!mounted) {
+		return null
+	}
+
 	return (
 		<Card>
 			<CardHeader>

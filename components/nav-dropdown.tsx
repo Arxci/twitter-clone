@@ -1,6 +1,5 @@
 'use client'
 
-import * as React from 'react'
 import { useTheme } from 'next-themes'
 
 import { Icons } from './ui/icons'
@@ -30,7 +29,7 @@ const NavDropdown = () => {
 	return (
 		<DropdownMenu>
 			<Avatar>
-				<DropdownMenuTrigger>
+				<DropdownMenuTrigger className="h-10 w-10">
 					<AvatarImage src="https://github.com/shadcn.png" />
 					<AvatarFallback>CN</AvatarFallback>
 				</DropdownMenuTrigger>
