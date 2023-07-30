@@ -1,7 +1,7 @@
 'use client'
 
 import { useTheme } from 'next-themes'
-import { useClerk } from '@clerk/nextjs'
+import { useClerk, useUser } from '@clerk/nextjs'
 
 import { Icons } from './ui/icons'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -15,10 +15,18 @@ import {
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Switch } from '@/components/ui/switch'
+import Link from 'next/link'
 
 const NavDropdown = () => {
 	const { setTheme, theme } = useTheme()
 	const { signOut } = useClerk()
+	const { user } = useUser()
+
+	let initials = 'UN'
+
+	if (user && user?.firstName && user?.lastName) {
+		initials = user?.firstName?.substring(0) + user?.lastName?.substring(0)
+	}
 
 	const themeToggleHandler = () => {
 		if (theme === 'light') {
@@ -31,9 +39,12 @@ const NavDropdown = () => {
 	return (
 		<DropdownMenu>
 			<Avatar>
-				<DropdownMenuTrigger className="h-10 w-10">
-					<AvatarImage src="https://github.com/shadcn.png" />
-					<AvatarFallback>CN</AvatarFallback>
+				<DropdownMenuTrigger className="h-10 w-10 outline-none">
+					{user?.imageUrl ? (
+						<AvatarImage src={user?.imageUrl} />
+					) : (
+						<AvatarFallback className="bg-blue-500">{initials}</AvatarFallback>
+					)}
 				</DropdownMenuTrigger>
 				<DropdownMenuContent
 					align="end"
@@ -42,17 +53,23 @@ const NavDropdown = () => {
 					<DropdownMenuLabel>My Account</DropdownMenuLabel>
 					<DropdownMenuSeparator />
 					<DropdownMenuGroup>
-						<DropdownMenuItem>
-							<Icons.user className="mr-2 h-4 w-4" />
-							<span>Profile</span>
+						<DropdownMenuItem asChild>
+							<Link href={`/account/profile/${user?.id}`}>
+								<Icons.user className="mr-2 h-4 w-4" />
+								<span>Profile</span>
+							</Link>
 						</DropdownMenuItem>
-						<DropdownMenuItem>
-							<Icons.settings className="mr-2 h-4 w-4" />
-							<span>Settings</span>
+						<DropdownMenuItem asChild>
+							<Link href={`/account/settings/${user?.id}`}>
+								<Icons.settings className="mr-2 h-4 w-4" />
+								<span>Settings</span>
+							</Link>
 						</DropdownMenuItem>
-						<DropdownMenuItem>
-							<Icons.lifeBuoy className="mr-2 h-4 w-4" />
-							<span>Support</span>
+						<DropdownMenuItem asChild>
+							<Link href="/support">
+								<Icons.lifeBuoy className="mr-2 h-4 w-4" />
+								<span>Support</span>
+							</Link>
 						</DropdownMenuItem>
 						<DropdownMenuItem>
 							<Icons.moon className="mr-2 h-4 w-4" />
