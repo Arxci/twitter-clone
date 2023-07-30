@@ -17,7 +17,17 @@ export const PATCH = async (
 
 		const { postId } = params
 
-		const { title, message, tags, retweets, comments, likes } = body
+		const {
+			title,
+			message,
+			tags,
+			retweets,
+			comments,
+			likes,
+			userId,
+			username,
+			avatar,
+		} = body
 
 		if (!title && title?.length < 1) {
 			return new NextResponse('Please enter a valid title', { status: 401 })
@@ -48,9 +58,9 @@ export const PATCH = async (
 				id: postId,
 			},
 			data: {
-				userId: user.id,
-				username: user.username || '',
-				avatar: user.imageUrl || '',
+				userId: userId,
+				username: username,
+				avatar: avatar,
 				title,
 				tags,
 				message,
@@ -90,9 +100,9 @@ export const PATCH = async (
 				id: postId,
 			},
 			data: {
-				userId: user.id,
-				username: user.username || '',
-				avatar: user.imageUrl || '',
+				userId: userId,
+				username: username,
+				avatar: avatar,
 				title,
 				tags,
 				message,
@@ -106,20 +116,9 @@ export const PATCH = async (
 						data: formattedLikes,
 					},
 				},
-				comments: {
-					createMany: {
-						data: [
-							...comments.map(
-								(comment: {
-									userId: string
-									username: string
-									avatar: string
-									message: string
-								}) => comment
-							),
-						],
-					},
-				},
+			},
+			include: {
+				retweets: true,
 			},
 		})
 

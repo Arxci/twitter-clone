@@ -7,6 +7,7 @@ import { useUser } from '@clerk/nextjs'
 import { Button } from './ui/button'
 import { Icons } from './ui/icons'
 import { Post, Comment, Retweet, Like } from '@prisma/client'
+import { cn } from '@/lib/utils'
 
 interface PostActionsProps {
 	post: Post & { retweets: Retweet[]; likes: Like[]; comments: Comment[] }
@@ -16,32 +17,38 @@ const PostActions: React.FC<PostActionsProps> = ({ post }) => {
 	const { user } = useUser()
 	const router = useRouter()
 
-	const formattedRetweets = post.retweets?.map((_) => {
-		return { userId: post.userId, username: post.username, avatar: post.avatar }
+	const formattedRetweets = post.retweets?.map((retweet) => {
+		return {
+			userId: retweet.userId,
+			username: retweet.username,
+			avatar: retweet.avatar,
+		}
 	})
-	const formattedLikes = post.likes?.map((_) => {
-		return { userId: post.userId, username: post.username, avatar: post.avatar }
+	const formattedLikes = post.likes?.map((like) => {
+		return { userId: like.userId, username: like.username, avatar: like.avatar }
 	})
+
+	const didLike = formattedLikes.some((el) => el.userId === user?.id)
+	const didRetweet = formattedRetweets.some((el) => el.userId === user?.id)
 
 	const openCommentsHandler = () => {}
 
 	const updateRetweetsHandler = async () => {
 		if (!user) {
 			router.push('sign-in')
+			return
 		}
 
 		let updatedRetweets = []
-		const newRetweets: { userId: string; username: string; avatar: string }[] =
-			[...formattedRetweets]
 
-		if (newRetweets.some((el) => el.userId === user?.id)) {
+		if (formattedRetweets.some((el) => el.userId === user?.id)) {
 			updatedRetweets = [
-				...newRetweets.filter((retweet) => retweet.userId !== user?.id),
+				...formattedRetweets.filter((retweet) => retweet.userId !== user?.id),
 			]
 		} else {
 			updatedRetweets = [
-				...newRetweets,
-				{ userId: post.userId, username: post.username, avatar: post.avatar },
+				...formattedRetweets,
+				{ userId: user?.id, username: user?.username, avatar: user?.imageUrl },
 			]
 		}
 
@@ -65,16 +72,15 @@ const PostActions: React.FC<PostActionsProps> = ({ post }) => {
 		}
 
 		let updatedLikes = []
-		const newLikes: { userId: string; username: string; avatar: string }[] = [
-			...formattedLikes,
-		]
 
-		if (newLikes.some((el) => el.userId === user?.id)) {
-			updatedLikes = [...newLikes.filter((like) => like.userId !== user?.id)]
+		if (formattedLikes.some((el) => el.userId === user?.id)) {
+			updatedLikes = [
+				...formattedLikes.filter((like) => like.userId !== user?.id),
+			]
 		} else {
 			updatedLikes = [
-				...newLikes,
-				{ userId: post.userId, username: post.username, avatar: post.avatar },
+				...formattedLikes,
+				{ userId: user?.id, username: user?.username, avatar: user?.imageUrl },
 			]
 		}
 
@@ -110,7 +116,14 @@ const PostActions: React.FC<PostActionsProps> = ({ post }) => {
 				<Button
 					variant="ghost"
 					size="sm"
-					className="flex gap-2"
+					className={cn(
+						'flex gap-2',
+						`${
+							didRetweet
+								? 'bg-blue-500 text-white hover:bg-blue-500/60'
+								: undefined
+						}`
+					)}
 					onClick={updateRetweetsHandler}
 				>
 					<Icons.repeat className="h-4 w-4" />
@@ -122,7 +135,12 @@ const PostActions: React.FC<PostActionsProps> = ({ post }) => {
 				<Button
 					variant="ghost"
 					size="sm"
-					className="flex gap-2"
+					className={cn(
+						'flex gap-2',
+						`${
+							didLike ? 'bg-red-500 text-white hover:bg-red-500/60' : undefined
+						}`
+					)}
 					onClick={updateLikesHandler}
 				>
 					<Icons.heart className="h-4 w-4" />

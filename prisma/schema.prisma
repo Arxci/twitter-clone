@@ -18,10 +18,12 @@ model Comment {
   username    String
   avatar      String
   message     String
-  postId      String            @unique
-  post        Post              @relation(fields: [postId], references: [id])
+  postId      String            
+  post        Post              @relation("PostToComment", fields: [postId], references: [id])
   createdAt   DateTime          @default(now())
   updatedAt   DateTime          @updatedAt
+
+  @@index([postId])
 }
 
 model Like {
@@ -29,10 +31,12 @@ model Like {
   userId      String
   username    String
   avatar      String
-  postId      String            @unique
-  post        Post              @relation(fields: [postId], references: [id])
+  postId      String            
+  post        Post              @relation("PostToLike",fields: [postId], references: [id])
   createdAt   DateTime          @default(now())
   updatedAt   DateTime          @updatedAt
+
+  @@index([postId])
 }
 
 model Retweet {
@@ -40,10 +44,12 @@ model Retweet {
   userId      String
   username    String
   avatar      String
-  postId      String            @unique
-  post        Post              @relation(fields: [postId], references: [id])
+  postId      String            
+  post        Post              @relation("PostToRetweet",fields: [postId], references: [id])
   createdAt   DateTime          @default(now())
   updatedAt   DateTime          @updatedAt
+
+  @@index([postId])
 }
 
 model Post {
@@ -53,9 +59,9 @@ model Post {
   username    String
   avatar      String
   message     String            @db.Text()
-  likes       Like[]            
-  retweets    Retweet[]
-  comments    Comment[]               
+  likes       Like[]            @relation("PostToLike")
+  retweets    Retweet[]         @relation("PostToRetweet")
+  comments    Comment[]         @relation("PostToComment")       
   tags        String  
   createdAt   DateTime          @default(now())
   updatedAt   DateTime          @updatedAt    
