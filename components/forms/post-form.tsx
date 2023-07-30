@@ -1,8 +1,11 @@
 'use client'
 
+import { useState } from 'react'
 import * as z from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
+import { useRouter } from 'next/navigation'
+import axios from 'axios'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -17,9 +20,11 @@ import {
 import { Input } from '@/components/ui/input'
 import { Textarea } from '../ui/textarea'
 import { ScrollArea } from '../ui/scroll-area'
+import { useToast } from '../ui/use-toast'
+import LoadingSpinner from '../ui/loading-spinner'
 
 const formSchema = z.object({
-	title: z.string().min(1).max(10),
+	title: z.string().min(1).max(20),
 	message: z.string().min(10).max(100),
 	tags: z.string().optional(),
 })
@@ -42,6 +47,10 @@ interface PostFormProps {
 }
 
 const PostForm: React.FC<PostFormProps> = ({ onCancel }) => {
+	const [loading, setLoading] = useState(false)
+	const { toast } = useToast()
+	const router = useRouter()
+
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
@@ -51,10 +60,25 @@ const PostForm: React.FC<PostFormProps> = ({ onCancel }) => {
 		},
 	})
 
-	function formSubmitHandler(values: z.infer<typeof formSchema>) {
-		// Do something with the form values.
-		// ✅ This will be type-safe and validated.
-		console.log(values)
+	async function formSubmitHandler(data: z.infer<typeof formSchema>) {
+		try {
+			setLoading(true)
+
+			await axios.post(`/api/posts`, data)
+
+			toast({
+				description: 'Your tweet has been posted',
+			})
+			router.refresh()
+			onCancel()
+		} catch (err) {
+			toast({
+				title: 'Uh oh! Something went wrong.',
+				description: 'There was a problem with your request.',
+			})
+		} finally {
+			setLoading(false)
+		}
 	}
 
 	return (
@@ -97,8 +121,8 @@ const PostForm: React.FC<PostFormProps> = ({ onCancel }) => {
 									/>
 								</FormControl>
 								<FormDescription>
-									Enter your tags separated by a comma ex: (politics,
-									entertainment)
+									Enter your tags separated by a comma ex:
+									(politics,entertainment)
 								</FormDescription>
 								<FormMessage />
 							</FormItem>
@@ -129,6 +153,7 @@ const PostForm: React.FC<PostFormProps> = ({ onCancel }) => {
 						onClick={onCancel}
 						variant="outline"
 						className="w-full"
+						disabled={loading}
 					>
 						Cancel
 					</Button>
@@ -136,8 +161,15 @@ const PostForm: React.FC<PostFormProps> = ({ onCancel }) => {
 						type="submit"
 						variant="blue"
 						className="w-full"
+						disabled={loading}
 					>
-						Post
+						{loading ? (
+							<div>
+								<LoadingSpinner /> Loading...
+							</div>
+						) : (
+							'Post'
+						)}
 					</Button>
 				</div>
 			</form>

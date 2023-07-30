@@ -1,5 +1,6 @@
 import { authMiddleware, clerkClient } from '@clerk/nextjs'
 import { NextResponse } from 'next/server'
+import prismaDB from './lib/prisma'
 
 // This example protects all routes including api/trpc routes
 // Please edit this to allow other routes to be public as needed.

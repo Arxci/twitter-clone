@@ -1,12 +1,18 @@
 import Post from '@/components/post'
+import prismaDB from '@/lib/prisma'
 
-const PostShowcase = () => {
+const PostShowcase = async () => {
+	const posts = await prismaDB.post.findMany({
+		include: {
+			retweets: true,
+			likes: true,
+			comments: true,
+		},
+	})
+
 	return (
 		<div className=" flex flex-col gap-6">
-			<Post />
-			<Post />
-			<Post />
-			<Post />
+			{posts && posts.map((post) => <Post post={post} />)}
 		</div>
 	)
 }
