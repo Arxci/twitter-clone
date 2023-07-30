@@ -27,8 +27,11 @@ const CreatePost = () => {
 
 	return (
 		<Card>
-			<CardContent className="flex-col text-center md:flex-row pt-6 w-full md:items-center flex gap-2 justify-between">
-				<CardTitle> Share your thoughts?</CardTitle>
+			<CardContent className="text-center flex-row pt-6 w-full items-center flex gap-2 justify-between">
+				<CardTitle className="text-sm sm:text-xl md:text-2xl">
+					{' '}
+					Share your thoughts?
+				</CardTitle>
 				{user && (
 					<Dialog
 						open={open}

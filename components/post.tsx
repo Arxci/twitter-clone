@@ -31,7 +31,7 @@ const Post = () => {
 		<Card>
 			<CardHeader>
 				<CardTitle>Post Title</CardTitle>
-				<CardDescription className="flex flex-col gap-2">
+				<div className="flex flex-col gap-2 text-muted-foreground text-sm">
 					<div className="flex items-center">
 						<Avatar className="mr-2 h-6 w-6">
 							<AvatarImage src="https://github.com/shadcn.png" />
@@ -53,11 +53,11 @@ const Post = () => {
 							#Politics
 						</Badge>
 					</div>
-				</CardDescription>
+				</div>
 			</CardHeader>
 			<Link href="/">
 				<CardContent>
-					<p className="line-clamp-4">
+					<p className="line-clamp-5">
 						Lorem ipsum dolor sit amet consectetur adipisicing elit. Incidunt
 						distinctio quibusdam deserunt, pariatur at dolorem. Officiis nobis
 						modi cumque impedit sed architecto repudiandae possimus minus sint

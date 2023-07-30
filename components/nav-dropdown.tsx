@@ -43,24 +43,27 @@ const NavDropdown = () => {
 					{user?.imageUrl ? (
 						<AvatarImage src={user?.imageUrl} />
 					) : (
-						<AvatarFallback className="bg-blue-500">{initials}</AvatarFallback>
+						<AvatarFallback>{initials}</AvatarFallback>
 					)}
 				</DropdownMenuTrigger>
 				<DropdownMenuContent
 					align="end"
 					className="w-56"
 				>
-					<DropdownMenuLabel>My Account</DropdownMenuLabel>
+					<DropdownMenuLabel>
+						<div>My Account</div>
+						<div className="text-muted-foreground">{user?.username}</div>
+					</DropdownMenuLabel>
 					<DropdownMenuSeparator />
 					<DropdownMenuGroup>
 						<DropdownMenuItem asChild>
-							<Link href={`/account/profile/${user?.id}`}>
+							<Link href={`/profile`}>
 								<Icons.user className="mr-2 h-4 w-4" />
 								<span>Profile</span>
 							</Link>
 						</DropdownMenuItem>
 						<DropdownMenuItem asChild>
-							<Link href={`/account/settings/${user?.id}`}>
+							<Link href={`/user-profile`}>
 								<Icons.settings className="mr-2 h-4 w-4" />
 								<span>Settings</span>
 							</Link>

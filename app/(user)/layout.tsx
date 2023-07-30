@@ -10,7 +10,7 @@ export default function RootLayout({
 		<div className="flex flex-col min-h-screen">
 			<SimpleHeader />
 			<main className="flex-1 ">
-				<Container className="flex items-center py-20 justify-center">
+				<Container className="flex items-center  justify-center">
 					{children}
 				</Container>
 			</main>
