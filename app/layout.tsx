@@ -5,6 +5,7 @@ import '../styles/global.css'
 
 import { siteConfig } from '@/configs/siteConfig'
 import { ThemeProvider } from '@/components/theme-provider'
+import { ClerkProvider } from '@clerk/nextjs'
 
 const font = Inter({ subsets: ['latin'] })
 
@@ -19,16 +20,18 @@ export default function RootLayout({
 	children: React.ReactNode
 }) {
 	return (
-		<html lang="en">
-			<body className={`${font.className}`}>
-				<ThemeProvider
-					attribute="class"
-					defaultTheme="light"
-					enableSystem
-				>
-					{children}
-				</ThemeProvider>
-			</body>
-		</html>
+		<ClerkProvider>
+			<html lang="en">
+				<body className={`${font.className}`}>
+					<ThemeProvider
+						attribute="class"
+						defaultTheme="light"
+						enableSystem
+					>
+						{children}
+					</ThemeProvider>
+				</body>
+			</html>
+		</ClerkProvider>
 	)
 }

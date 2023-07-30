@@ -1,6 +1,7 @@
 'use client'
 
 import { useTheme } from 'next-themes'
+import { useClerk } from '@clerk/nextjs'
 
 import { Icons } from './ui/icons'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -17,6 +18,7 @@ import { Switch } from '@/components/ui/switch'
 
 const NavDropdown = () => {
 	const { setTheme, theme } = useTheme()
+	const { signOut } = useClerk()
 
 	const themeToggleHandler = () => {
 		if (theme === 'light') {
@@ -64,7 +66,7 @@ const NavDropdown = () => {
 						</DropdownMenuItem>
 					</DropdownMenuGroup>
 					<DropdownMenuSeparator />
-					<DropdownMenuItem>
+					<DropdownMenuItem onClick={() => signOut()}>
 						<Icons.logout className="mr-2 h-4 w-4" />
 						<span>Log out</span>
 					</DropdownMenuItem>
