@@ -38,51 +38,44 @@ const Post: React.FC<PostProps> = ({ post }) => {
 	}
 
 	return (
-		<Card>
-			<CardHeader>
-				<CardTitle>{post.title}</CardTitle>
-				<div className="flex flex-col gap-2 text-muted-foreground text-sm">
-					<div className="flex items-center h-10">
-						<Avatar className="mr-2 h-6 w-6">
-							<AvatarImage src={post.avatar} />
-							<AvatarFallback>CN</AvatarFallback>
-						</Avatar>
-						<span>{post.username}</span>
-						<Icons.dot className="h-4 w-4" />
-						<span>{format(post.createdAt, 'MMM dd').toUpperCase()}</span>
-
-						{post.userId != user?.id && (
-							<>
-								<Icons.dot className="h-4  w-4 hidden md:block" />
-								<Button className="text-blue-500 hidden md:block p-0 bg-transparent hover:bg-transparent">
-									Follow
-								</Button>
-							</>
-						)}
-					</div>
-					<div className="flex items-center gap-2">
-						{tags &&
-							tags.map((tag) => (
-								<Badge
-									key={tag}
-									variant="outline"
-									className="text-muted-foreground"
-								>
-									#{tag}
-								</Badge>
-							))}
-					</div>
-				</div>
-			</CardHeader>
+		<Card className="hover:bg-muted">
 			<Link href="/">
+				<CardHeader>
+					<div className="flex flex-col gap-2 text-muted-foreground text-sm">
+						<div className="flex items-center h-10">
+							<Avatar className="mr-2 h-6 w-6">
+								<AvatarImage src={post.avatar} />
+								<AvatarFallback>CN</AvatarFallback>
+							</Avatar>
+							<Link
+								href="/"
+								className="text-blue-500 hover:text-foreground"
+							>
+								@{post.username}
+							</Link>
+							<Icons.dot className="h-4 w-4" />
+							<span>{format(post.createdAt, 'MMM dd')}</span>
+
+							{post.userId != user?.id && (
+								<>
+									<Icons.dot className="h-4  w-4 hidden md:block" />
+									<Button className="text-blue-500 hidden md:block p-0 bg-transparent hover:bg-transparent">
+										Follow
+									</Button>
+								</>
+							)}
+						</div>
+					</div>
+				</CardHeader>
+
 				<CardContent>
 					<p className="line-clamp-5">{post.message}</p>
 				</CardContent>
-			</Link>
 
-			<CardFooter>
-				<PostActions post={post} />
-			</CardFooter>
+				<CardFooter>
+					<PostActions post={post} />
+				</CardFooter>
+			</Link>
 		</Card>
 	)
 }

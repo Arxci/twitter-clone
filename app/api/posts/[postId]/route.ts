@@ -29,10 +29,6 @@ export const PATCH = async (
 			avatar,
 		} = body
 
-		if (!title && title?.length < 1) {
-			return new NextResponse('Please enter a valid title', { status: 401 })
-		}
-
 		if (!message && message?.length < 10) {
 			return new NextResponse('Please enter a valid message', { status: 401 })
 		}
@@ -61,7 +57,7 @@ export const PATCH = async (
 				userId: userId,
 				username: username,
 				avatar: avatar,
-				title,
+				title: title || '',
 				tags,
 				message,
 				retweets: {
@@ -125,6 +121,32 @@ export const PATCH = async (
 		return NextResponse.json(posts)
 	} catch (error) {
 		console.log('[POST_PATCH]', error)
+		return new NextResponse('Internal error', { status: 500 })
+	}
+}
+
+export const DELETE = async (
+	req: Request,
+	{ params }: { params: { postId: string } }
+) => {
+	try {
+		const user = await currentUser()
+
+		if (!user) {
+			return new NextResponse('User not signed in', { status: 401 })
+		}
+
+		const { postId } = params
+
+		const post = await prismaDB.post.delete({
+			where: {
+				id: postId,
+			},
+		})
+
+		return NextResponse.json(post)
+	} catch (error) {
+		console.log('[POST_DELETE]', error)
 		return new NextResponse('Internal error', { status: 500 })
 	}
 }

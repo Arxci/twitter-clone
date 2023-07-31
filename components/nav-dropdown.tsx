@@ -52,7 +52,7 @@ const NavDropdown = () => {
 				>
 					<DropdownMenuLabel>
 						<div>My Account</div>
-						<div className="text-muted-foreground">{user?.username}</div>
+						<div className=" text-blue-500">@{user?.username}</div>
 					</DropdownMenuLabel>
 					<DropdownMenuSeparator />
 					<DropdownMenuGroup>

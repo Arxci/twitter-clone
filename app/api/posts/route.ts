@@ -14,11 +14,7 @@ export const POST = async (req: Request) => {
 
 		const { title, message, tags } = body
 
-		if (!title && title?.length < 1) {
-			return new NextResponse('Please enter a valid title', { status: 401 })
-		}
-
-		if (!message && message?.length < 10) {
+		if (!message && message?.length > 10 && message?.length < 400) {
 			return new NextResponse('Please enter a valid message', { status: 401 })
 		}
 
@@ -27,7 +23,7 @@ export const POST = async (req: Request) => {
 				userId: user.id,
 				username: user.username || '',
 				avatar: user.imageUrl || '',
-				title,
+				title: title || '',
 				tags,
 				message,
 			},

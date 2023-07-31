@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import * as z from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
@@ -11,21 +11,16 @@ import { Button } from '@/components/ui/button'
 import {
 	Form,
 	FormControl,
-	FormDescription,
 	FormField,
 	FormItem,
-	FormLabel,
 	FormMessage,
 } from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '../ui/textarea'
-import { ScrollArea } from '../ui/scroll-area'
+
 import { useToast } from '../ui/use-toast'
 import LoadingSpinner from '../ui/loading-spinner'
 
 const formSchema = z.object({
-	title: z.string().min(1).max(20),
-	message: z.string().min(10).max(100),
+	message: z.string().min(10).max(400),
 	tags: z.string().optional(),
 })
 
@@ -49,12 +44,13 @@ interface PostFormProps {
 const PostForm: React.FC<PostFormProps> = ({ onCancel }) => {
 	const [loading, setLoading] = useState(false)
 	const { toast } = useToast()
+	const ref = useRef<HTMLDivElement>()
+
 	const router = useRouter()
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
-			title: '',
 			message: '',
 			tags: '',
 		},
@@ -70,6 +66,12 @@ const PostForm: React.FC<PostFormProps> = ({ onCancel }) => {
 				description: 'Your tweet has been posted',
 			})
 			router.refresh()
+
+			if (ref.current) {
+				ref.current.innerText = ''
+			}
+
+			form.setValue('message', '')
 			onCancel()
 		} catch (err) {
 			toast({
@@ -85,96 +87,55 @@ const PostForm: React.FC<PostFormProps> = ({ onCancel }) => {
 		<Form {...form}>
 			<form
 				onSubmit={form.handleSubmit(formSubmitHandler)}
-				className="space-y-8  "
+				className="flex  w-full flex-col gap-4"
 			>
-				<ScrollArea className="h-[250px] md:h-auto flex flex-col">
-					<FormField
-						control={form.control}
-						name="title"
-						render={({ field }) => (
-							<FormItem>
-								<FormLabel>Title</FormLabel>
-								<FormControl>
-									<Input
-										placeholder="Title"
-										type="text"
-										{...field}
-									/>
-								</FormControl>
-
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
-
-					<FormField
-						control={form.control}
-						name="tags"
-						render={({ field }) => (
-							<FormItem>
-								<FormLabel>Tags</FormLabel>
-								<FormControl>
-									<Input
-										placeholder="Tags"
-										type="text"
-										{...field}
-									/>
-								</FormControl>
-								<FormDescription>
-									Enter your tags separated by a comma ex:
-									(politics,entertainment)
-								</FormDescription>
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
+				<div className="w-full">
 					<FormField
 						control={form.control}
 						name="message"
 						render={({ field }) => (
 							<FormItem>
-								<FormLabel>Message</FormLabel>
 								<FormControl>
-									<Textarea
-										placeholder="Message"
-										className="resize-none h-[100px]"
-										{...field}
-									/>
+									<div
+										role="textbox"
+										// @ts-ignore
+										ref={ref}
+										content={field.value}
+										contentEditable
+										className="block w-full resize-none min-h-8 border-b max-h-[100px] outline-none overflow-hidden empty:before:content-['Whats_happening!?']"
+										onInput={(e: any) => {
+											field.onChange(e.target.innerText)
+										}}
+									></div>
 								</FormControl>
-
 								<FormMessage />
 							</FormItem>
 						)}
 					/>
-				</ScrollArea>
-				<div className="flex gap-6">
-					<Button
-						type="button"
-						onClick={onCancel}
-						variant="outline"
-						className="w-full"
-						disabled={loading}
-					>
-						Cancel
-					</Button>
-					<Button
-						type="submit"
-						variant="blue"
-						className="w-full"
-						disabled={loading}
-					>
-						{loading ? (
-							<div>
-								<LoadingSpinner /> Loading...
-							</div>
-						) : (
-							'Post'
-						)}
-					</Button>
 				</div>
+
+				<Button
+					type="submit"
+					variant="blue"
+					className="ml-auto rounded-full"
+					disabled={loading}
+				>
+					{loading ? (
+						<div>
+							<LoadingSpinner /> Loading...
+						</div>
+					) : (
+						'Tweet'
+					)}
+				</Button>
 			</form>
 		</Form>
 	)
 }
 
 export default PostForm
+
+/**<textarea
+										placeholder="Whats Happening!?"
+										className="resize-none text-lg w-full placeholder:text-lg placeholder:text-black p-0  h-8 rounded-none border-b outline-none"
+									/> */

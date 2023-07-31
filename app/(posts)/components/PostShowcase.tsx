@@ -8,6 +8,9 @@ const PostShowcase = async () => {
 			likes: true,
 			comments: true,
 		},
+		orderBy: {
+			createdAt: 'desc',
+		},
 	})
 
 	return (

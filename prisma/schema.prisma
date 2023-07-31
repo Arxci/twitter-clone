@@ -19,7 +19,7 @@ model Comment {
   avatar      String
   message     String
   postId      String            
-  post        Post              @relation("PostToComment", fields: [postId], references: [id])
+  post        Post              @relation("PostToComment", fields: [postId], references: [id], onDelete: Cascade)
   createdAt   DateTime          @default(now())
   updatedAt   DateTime          @updatedAt
 
@@ -32,7 +32,7 @@ model Like {
   username    String
   avatar      String
   postId      String            
-  post        Post              @relation("PostToLike",fields: [postId], references: [id])
+  post        Post              @relation("PostToLike",fields: [postId], references: [id], onDelete: Cascade)
   createdAt   DateTime          @default(now())
   updatedAt   DateTime          @updatedAt
 
@@ -45,7 +45,7 @@ model Retweet {
   username    String
   avatar      String
   postId      String            
-  post        Post              @relation("PostToRetweet",fields: [postId], references: [id])
+  post        Post              @relation("PostToRetweet",fields: [postId], references: [id], onDelete: Cascade)
   createdAt   DateTime          @default(now())
   updatedAt   DateTime          @updatedAt
 
