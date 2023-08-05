@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import * as z from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
@@ -18,10 +18,12 @@ import {
 
 import { useToast } from '../ui/use-toast'
 import LoadingSpinner from '../ui/loading-spinner'
+import { Input } from '../ui/input'
+import { useUser } from '@clerk/nextjs'
+import { Like, Post, Retweet, Comment } from '@prisma/client'
 
 const formSchema = z.object({
-	message: z.string().min(10).max(400),
-	tags: z.string().optional(),
+	message: z.string().min(1).max(400),
 })
 
 const customErrorMap: z.ZodErrorMap = (issue, ctx) => {
@@ -37,14 +39,33 @@ const customErrorMap: z.ZodErrorMap = (issue, ctx) => {
 
 z.setErrorMap(customErrorMap)
 
-interface PostFormProps {
-	onCancel: () => void
+interface CommentFormProps {
+	post: Post & { retweets: Retweet[]; likes: Like[]; comments: Comment[] }
 }
 
-const PostForm: React.FC<PostFormProps> = ({ onCancel }) => {
+const CommentForm: React.FC<CommentFormProps> = ({ post }) => {
 	const [loading, setLoading] = useState(false)
 	const { toast } = useToast()
-	const ref = useRef<HTMLDivElement>()
+	const { user } = useUser()
+
+	const formattedComments = post.comments?.map((comment) => {
+		return {
+			userId: comment.userId,
+			username: comment.username,
+			avatar: comment.avatar,
+			message: comment.message,
+		}
+	})
+	const formattedRetweets = post.retweets?.map((retweet) => {
+		return {
+			userId: retweet.userId,
+			username: retweet.username,
+			avatar: retweet.avatar,
+		}
+	})
+	const formattedLikes = post.likes?.map((like) => {
+		return { userId: like.userId, username: like.username, avatar: like.avatar }
+	})
 
 	const router = useRouter()
 
@@ -52,27 +73,42 @@ const PostForm: React.FC<PostFormProps> = ({ onCancel }) => {
 		resolver: zodResolver(formSchema),
 		defaultValues: {
 			message: '',
-			tags: '',
 		},
 	})
 
 	async function formSubmitHandler(data: z.infer<typeof formSchema>) {
+		if (!user) {
+			router.push('sign-in')
+			return
+		}
+
+		const updatedComments = [
+			...formattedComments,
+			{
+				userId: user.id,
+				username: user.username,
+				avatar: user.imageUrl,
+				message: data.message,
+			},
+		]
+
+		const formattedData = {
+			...post,
+			comments: updatedComments,
+			retweets: formattedRetweets,
+			likes: formattedLikes,
+		}
+
 		try {
 			setLoading(true)
 
-			await axios.post(`/api/posts`, data)
+			await axios.patch(`/api/posts/${post.id}`, formattedData)
 
 			toast({
-				description: 'Your tweet has been posted',
+				description: 'Comment posted!',
 			})
+
 			router.refresh()
-
-			if (ref.current) {
-				ref.current.innerText = ''
-			}
-
-			form.setValue('message', '')
-			onCancel()
 		} catch (err) {
 			toast({
 				title: 'Uh oh! Something went wrong.',
@@ -96,17 +132,11 @@ const PostForm: React.FC<PostFormProps> = ({ onCancel }) => {
 						render={({ field }) => (
 							<FormItem>
 								<FormControl>
-									<div
-										role="textbox"
-										// @ts-ignore
-										ref={ref}
-										content={field.value}
-										contentEditable
-										className="block w-full resize-none min-h-8 border-b max-h-[100px] outline-none overflow-hidden empty:before:content-['Whats_happening!?']"
-										onInput={(e: any) => {
-											field.onChange(e.target.innerText)
-										}}
-									></div>
+									<Input
+										placeholder="Comment"
+										className="w-full"
+										{...field}
+									/>
 								</FormControl>
 								<FormMessage />
 							</FormItem>
@@ -125,7 +155,7 @@ const PostForm: React.FC<PostFormProps> = ({ onCancel }) => {
 							<LoadingSpinner /> Loading...
 						</div>
 					) : (
-						'Tweet'
+						'Comment'
 					)}
 				</Button>
 			</form>
@@ -133,4 +163,4 @@ const PostForm: React.FC<PostFormProps> = ({ onCancel }) => {
 	)
 }
 
-export default PostForm
+export default CommentForm

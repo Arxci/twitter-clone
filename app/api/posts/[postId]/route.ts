@@ -91,6 +91,20 @@ export const PATCH = async (
 				  ]
 				: []
 
+		const formattedComments =
+			comments.length > 0
+				? [
+						...comments.map(
+							(comment: {
+								userId: string
+								username: string
+								avatar: string
+								message: string
+							}) => comment
+						),
+				  ]
+				: []
+
 		const posts = await prismaDB.post.update({
 			where: {
 				id: postId,
@@ -112,9 +126,11 @@ export const PATCH = async (
 						data: formattedLikes,
 					},
 				},
-			},
-			include: {
-				retweets: true,
+				comments: {
+					createMany: {
+						data: formattedComments,
+					},
+				},
 			},
 		})
 

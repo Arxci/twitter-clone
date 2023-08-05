@@ -15,7 +15,13 @@ const PostShowcase = async () => {
 
 	return (
 		<div className=" flex flex-col gap-6">
-			{posts && posts.map((post) => <Post post={post} />)}
+			{posts &&
+				posts.map((post) => (
+					<Post
+						key={post.id}
+						post={post}
+					/>
+				))}
 		</div>
 	)
 }

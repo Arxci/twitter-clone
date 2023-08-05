@@ -2,32 +2,28 @@
 
 import { useState, useEffect } from 'react'
 import { format } from 'date-fns'
-import { User } from '@clerk/nextjs/server'
 
-import {
-	Card,
-	CardContent,
-	CardFooter,
-	CardHeader,
-	CardTitle,
-} from '@/components/ui/card'
+import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { Icons } from './ui/icons'
 import { Button } from './ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
-import { Badge } from './ui/badge'
+
 import Link from 'next/link'
 import { Comment, Like, Post, Retweet } from '@prisma/client'
 import { useUser } from '@clerk/nextjs'
 import PostActions from './post-actions'
+import { useRouter } from 'next/navigation'
+import { cn } from '@/lib/utils'
 
 interface PostProps {
 	post: Post & { retweets: Retweet[]; likes: Like[]; comments: Comment[] }
+	disableNavigate?: boolean
 }
 
-const Post: React.FC<PostProps> = ({ post }) => {
+const Post: React.FC<PostProps> = ({ post, disableNavigate = false }) => {
 	const [mounted, setMounted] = useState(false)
 	const { user } = useUser()
-	const tags = post.tags.split(',')
+	const router = useRouter()
 
 	useEffect(() => {
 		setMounted(true)
@@ -37,9 +33,19 @@ const Post: React.FC<PostProps> = ({ post }) => {
 		return null
 	}
 
+	const cardClickHandler = () => {
+		if (!disableNavigate) {
+			router.push(`/${post.id}`)
+		}
+	}
+
 	return (
-		<Card className="hover:bg-muted">
-			<Link href="/">
+		<Card
+			className={cn(
+				disableNavigate ? undefined : 'cursor-pointer hover:bg-muted'
+			)}
+		>
+			<div onClick={cardClickHandler}>
 				<CardHeader>
 					<div className="flex flex-col gap-2 text-muted-foreground text-sm">
 						<div className="flex items-center h-10">
@@ -73,9 +79,12 @@ const Post: React.FC<PostProps> = ({ post }) => {
 				</CardContent>
 
 				<CardFooter>
-					<PostActions post={post} />
+					<PostActions
+						post={post}
+						disableNavigate={disableNavigate}
+					/>
 				</CardFooter>
-			</Link>
+			</div>
 		</Card>
 	)
 }

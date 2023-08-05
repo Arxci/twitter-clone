@@ -17,9 +17,9 @@ model Comment {
   userId      String
   username    String
   avatar      String
-  message     String
+  message     String            @db.Text()       
   postId      String            
-  post        Post              @relation("PostToComment", fields: [postId], references: [id], onDelete: Cascade)
+  post        Post              @relation("PostToComment",fields: [postId], references: [id], onDelete: Cascade)
   createdAt   DateTime          @default(now())
   updatedAt   DateTime          @updatedAt
 

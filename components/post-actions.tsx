@@ -14,9 +14,13 @@ import { useToast } from './ui/use-toast'
 
 interface PostActionsProps {
 	post: Post & { retweets: Retweet[]; likes: Like[]; comments: Comment[] }
+	disableNavigate?: boolean
 }
 
-const PostActions: React.FC<PostActionsProps> = ({ post }) => {
+const PostActions: React.FC<PostActionsProps> = ({
+	post,
+	disableNavigate = false,
+}) => {
 	const [isDeleting, setIsDeleting] = useState(false)
 	const [loading, setLoading] = useState(false)
 	const { user } = useUser()
@@ -33,11 +37,29 @@ const PostActions: React.FC<PostActionsProps> = ({ post }) => {
 	const formattedLikes = post.likes?.map((like) => {
 		return { userId: like.userId, username: like.username, avatar: like.avatar }
 	})
+	const formattedComments = post.comments?.map((comment) => {
+		return {
+			userId: comment.userId,
+			username: comment.username,
+			avatar: comment.avatar,
+			message: comment.message,
+		}
+	})
 
 	const didLike = formattedLikes.some((el) => el.userId === user?.id)
 	const didRetweet = formattedRetweets.some((el) => el.userId === user?.id)
 
-	const openCommentsHandler = () => {}
+	const openCommentsHandler = (e: any) => {
+		e.stopPropagation()
+		e.preventDefault()
+
+		if (!user) {
+			router.push('sign-in')
+			return
+		}
+
+		router.push(`/${post.id}`)
+	}
 
 	const updateRetweetsHandler = async (e: any) => {
 		e.stopPropagation()
@@ -65,7 +87,7 @@ const PostActions: React.FC<PostActionsProps> = ({ post }) => {
 			...post,
 			likes: formattedLikes,
 			retweets: updatedRetweets,
-			comments: post.comments,
+			comments: formattedComments,
 		}
 
 		try {
@@ -108,6 +130,7 @@ const PostActions: React.FC<PostActionsProps> = ({ post }) => {
 				description: 'Post deleted!',
 			})
 			router.refresh()
+			router.push('/')
 		} catch (err) {
 			toast({
 				title: 'Uh oh! Something went wrong.',
@@ -125,6 +148,7 @@ const PostActions: React.FC<PostActionsProps> = ({ post }) => {
 
 		if (!user) {
 			router.push('sign-in')
+			return
 		}
 
 		let updatedLikes = []
@@ -144,7 +168,7 @@ const PostActions: React.FC<PostActionsProps> = ({ post }) => {
 			...post,
 			likes: updatedLikes,
 			retweets: formattedRetweets,
-			comments: post.comments,
+			comments: formattedComments,
 		}
 
 		try {
@@ -210,18 +234,21 @@ const PostActions: React.FC<PostActionsProps> = ({ post }) => {
 			</div>
 			<ul className="grid grid-cols-3 gap-4 ml-auto ">
 				<li className="flex justify-center text-muted-foreground">
-					<Button
-						variant="ghost"
-						size="sm"
-						className="flex gap-2 hover:bg-background/80"
-						disabled={loading}
-						onClick={openCommentsHandler}
-					>
-						<Icons.message className="h-4 w-4" />
-						<span>{post.comments.length}</span>
-						<span className="sr-only">Comments</span>
-					</Button>
+					{!disableNavigate && (
+						<Button
+							variant="ghost"
+							size="sm"
+							className="flex gap-2 hover:bg-background/80"
+							disabled={loading}
+							onClick={openCommentsHandler}
+						>
+							<Icons.message className="h-4 w-4" />
+							<span>{post.comments.length}</span>
+							<span className="sr-only">Comments</span>
+						</Button>
+					)}
 				</li>
+
 				<li className="flex justify-center text-muted-foreground">
 					<Button
 						variant="ghost"
